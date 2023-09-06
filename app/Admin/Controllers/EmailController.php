@@ -2,7 +2,9 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Post\Folder;
 use App\Models\Email;
+use Encore\Admin\Actions\Action;
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -65,7 +67,9 @@ class EmailController extends AdminController
                 }
 
         });
-
+        $grid->actions(function ($actions) {
+            $actions->add(new Folder());
+        });
         return $grid;
     }
 

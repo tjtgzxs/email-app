@@ -6,7 +6,9 @@ use App\Models\Folder;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
+use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
+use http\Env\Request;
 
 class FolderController extends AdminController
 {
@@ -16,15 +18,19 @@ class FolderController extends AdminController
      * @var string
      */
     protected $title = 'Folder';
-
+    private $_id;
     /**
      * Make a grid builder.
      *
      * @return Grid
      */
+
+
+
     protected function grid()
     {
         $grid = new Grid(new Folder());
+
 
         $grid->column('id', __('Id'));
         $grid->column('email_id', __('Email id'));
@@ -39,6 +45,13 @@ class FolderController extends AdminController
 
         return $grid;
     }
+    public function create(Content $content)
+    {
+        $email_id = request()->get('email_id');
+        return $content
+            ->header('用户管理')
+            ->body($this->form($email_id));
+    }
 
     /**
      * Make a show builder.
@@ -48,6 +61,7 @@ class FolderController extends AdminController
      */
     protected function detail($id)
     {
+
         $show = new Show(Folder::findOrFail($id));
 
         $show->field('id', __('Id'));
@@ -69,11 +83,10 @@ class FolderController extends AdminController
      *
      * @return Form
      */
-    protected function form()
+    protected function form($email_id=0)
     {
         $form = new Form(new Folder());
-
-        $form->number('email_id', __('Email id'));
+        $form->hidden('email_id', __('Email id'))->default($email_id);
         $form->text('folder', __('Folder'));
         $form->text('from', __('From'));
         $form->text('analyze', __('Analyze'));
