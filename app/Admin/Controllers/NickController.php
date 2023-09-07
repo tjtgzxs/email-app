@@ -47,6 +47,9 @@ class NickController extends AdminController
                 if(empty($this->folder_id)){
                     return "未分配文件夹";
                 }
+                if (empty($this->folder)){
+                    return "文件夹已删除";
+                }
                 return $this->folder->folder;
             }
         );
