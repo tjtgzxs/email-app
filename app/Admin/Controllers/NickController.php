@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Models\Nick;
+use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -25,7 +26,9 @@ class NickController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Nick());
-
+        if(auth()->user()->id>1){
+            $grid->model()->where('admin_id',auth()->user()->id);
+        }
         $grid->column('id', __('Id'));
         $grid->column('email', __('Email'));
         $grid->column('nick', __('Nick'));
@@ -69,8 +72,11 @@ class NickController extends AdminController
 
         $form->email('email', __('Email'));
         $form->text('nick', __('Nick'));
-        $form->number('admin_id', __('Admin id'))->default(1);
-
+        if(auth()->user()->id==1){
+            $form->select('admin_id',__("所属人"))->options(Administrator::all()->pluck('name','id'));
+        }else{
+            $form->hidden('admin_id')->default(auth()->user()->id);
+        }
         return $form;
     }
 }

@@ -7,6 +7,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
+use Encore\Admin\Middleware\Session;
 use Encore\Admin\Show;
 use http\Env\Request;
 
@@ -18,7 +19,7 @@ class FolderController extends AdminController
      * @var string
      */
     protected $title = 'Folder';
-    private $_id;
+    private $_email_id;
     /**
      * Make a grid builder.
      *
@@ -30,8 +31,13 @@ class FolderController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Folder());
+        $email_id = request()->get('email_id');
+        if(!empty($email_id)){
+            \Illuminate\Support\Facades\Session::put('email_id', $email_id);
+            $grid->model()->where('email_id',$email_id);
+        }
 
-
+//        $grid->model()->where('email_id',$email_id);
         $grid->column('id', __('Id'));
         $grid->column('email_id', __('Email id'));
         $grid->column('folder', __('Folder'));
@@ -43,14 +49,8 @@ class FolderController extends AdminController
         $grid->column('updated_at', __('Updated at'));
         $grid->column('deleted_at', __('Deleted at'));
 
+//        $grid->getCreateUrl();
         return $grid;
-    }
-    public function create(Content $content)
-    {
-        $email_id = request()->get('email_id');
-        return $content
-            ->header('用户管理')
-            ->body($this->form($email_id));
     }
 
     /**
@@ -83,10 +83,12 @@ class FolderController extends AdminController
      *
      * @return Form
      */
-    protected function form($email_id=0)
+    protected function form()
     {
-        $form = new Form(new Folder());
-        $form->hidden('email_id', __('Email id'))->default($email_id);
+        $email_id=\Illuminate\Support\Facades\Session::get('email_id');
+        $form = new Form(new Folder(),function (Form $form)use($email_id){
+            $form->hidden('email_id', __('Email id'))->default($email_id);
+        });
         $form->text('folder', __('Folder'));
         $form->text('from', __('From'));
         $form->text('analyze', __('Analyze'));
