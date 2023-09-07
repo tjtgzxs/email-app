@@ -18,4 +18,13 @@ class Folder extends Model
         'to',
     ];
 
+    public function email()
+    {
+        return $this->belongsTo(Email::class, 'email_id', 'id');
+    }
+
+    public function nicks()
+    {
+        return $this->hasMany(Nick::class, 'folder_id', 'id');
+    }
 }
