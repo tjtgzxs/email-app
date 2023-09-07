@@ -10,6 +10,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Support\Facades\Auth;
 
 class NickController extends AdminController
 {
@@ -56,6 +57,11 @@ class NickController extends AdminController
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
         $grid->column('deleted_at', __('Deleted at'));
+        $grid->filter(function ($filter){
+            $filter->like('email',__('Email'));
+            $filter->like('nick',__('Nick'));
+
+        });
         $grid->tools(function (Grid\Tools $tools) {
             $tools->append(new ImportNickPost());
         });

@@ -31,13 +31,12 @@ class ImportNickPost extends Action
             ];
         },$data);
         foreach ($data as $item){
-            if(Nick::get()->where('email',$item['email'])->where('admin_id',$item['admin_id'])->where('folder_id',$item['folder_id'])->first()){
-                continue;
-            }
             if (empty($item['email'])||empty($item['nick'])||empty($item['folder_id'])){
                 continue;
             }
-            if(Nick::get()->where('nick',$item['nick'])->where('admin_id',$item['admin_id'])->where('folder_id',$item['folder_id'])->first()){
+            if(Nick::get()->where('email',$item['email'])->where('admin_id',$item['admin_id'])->where('folder_id',$item['folder_id'])->first()){
+                Nick::get()->where('email',$item['email'])->where('admin_id',$item['admin_id'])->where('folder_id',$item['folder_id'])->first()->update($item);
+            }else if(Nick::get()->where('nick',$item['nick'])->where('admin_id',$item['admin_id'])->where('folder_id',$item['folder_id'])->first()){
                 //更新
                 Nick::get()->where('nick',$item['nick'])->where('admin_id',$item['admin_id'])->where('folder_id',$item['folder_id'])->first()->update($item);
             }else{
